@@ -2,7 +2,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-const STREAM_TARGET = "localhost:8000";
+const STREAM_TARGET = "wildsafe-ml-service-4z6c.onrender.com";
+const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 
 async function waitForIceGatheringComplete(peerConnection) {
   if (peerConnection.iceGatheringState === "complete") {
@@ -136,7 +137,7 @@ function App() {
         setCameraStatus(videoTrack?.label ? `Using camera: ${videoTrack.label}` : "Camera connected.");
 
         const peerConnection = new RTCPeerConnection({
-          iceServers: [],
+          iceServers: ICE_SERVERS,
         });
         peerConnectionRef.current = peerConnection;
 
@@ -146,7 +147,7 @@ function App() {
 
         peerConnection.addEventListener("iceconnectionstatechange", () => {
           if (peerConnection.iceConnectionState === "failed") {
-            setError("WebRTC ICE connection failed.");
+            setError("WebRTC ICE connection failed. If this persists, the deployed service needs TURN relay support.");
           }
         });
 
