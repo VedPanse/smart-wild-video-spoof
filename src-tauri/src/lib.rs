@@ -1,8 +1,5 @@
 use serde::Deserialize;
-use std::{
-    collections::HashMap,
-    time::Duration,
-};
+use std::{collections::HashMap, time::Duration};
 
 #[derive(Debug)]
 struct HttpResponse {
@@ -17,9 +14,8 @@ struct JsonSessionDescription {
     sdp: String,
 }
 
-const WEBRTC_BACKEND_ENDPOINTS: &[&str] = &[
-    "https://wildsafe-ml-service-4z6c.onrender.com/predict/webrtc/offer",
-];
+const WEBRTC_BACKEND_ENDPOINTS: &[&str] =
+    &["https://wildsafe-ml-service.onrender.com/predict/webrtc/offer"];
 
 #[tauri::command]
 fn exchange_h264_webrtc_offer(offer_sdp: String) -> Result<String, String> {

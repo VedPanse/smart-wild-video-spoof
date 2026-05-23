@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-const STREAM_TARGET = "wildsafe-ml-service-4z6c.onrender.com";
+const STREAM_TARGET = "wildsafe-ml-service.onrender.com";
 const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 
 async function waitForIceGatheringComplete(peerConnection) {
