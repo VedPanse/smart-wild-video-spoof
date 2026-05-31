@@ -4,6 +4,10 @@ import "./App.css";
 
 const STREAM_TARGET = "wildsafe-ml-service.onrender.com";
 const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
+const CAMERA_LOCATION = {
+  latitude: 32.8815,
+  longitude: -117.235,
+};
 
 async function waitForIceGatheringComplete(peerConnection) {
   if (peerConnection.iceGatheringState === "complete") {
@@ -174,6 +178,8 @@ function App() {
         setBackendStatus(`Sending H.264 offer through Rust backend to ${STREAM_TARGET}...`);
         const answerSdp = await invoke("exchange_h264_webrtc_offer", {
           offerSdp: peerConnection.localDescription.sdp,
+          latitude: CAMERA_LOCATION.latitude,
+          longitude: CAMERA_LOCATION.longitude,
         });
 
         if (!isMounted) {

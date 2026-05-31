@@ -18,11 +18,17 @@ const WEBRTC_BACKEND_ENDPOINTS: &[&str] =
     &["https://wildsafe-ml-service.onrender.com/predict/webrtc/offer"];
 
 #[tauri::command]
-fn exchange_h264_webrtc_offer(offer_sdp: String) -> Result<String, String> {
+fn exchange_h264_webrtc_offer(
+    offer_sdp: String,
+    latitude: f64,
+    longitude: f64,
+) -> Result<String, String> {
+    validate_coordinates(latitude, longitude)?;
+
     let mut errors = Vec::new();
 
     for endpoint in WEBRTC_BACKEND_ENDPOINTS {
-        match exchange_offer_with_endpoint(endpoint, &offer_sdp) {
+        match exchange_offer_with_endpoint(endpoint, &offer_sdp, latitude, longitude) {
             Ok(answer_sdp) => return Ok(answer_sdp),
             Err(error) => errors.push(format!("{}: {}", endpoint, error)),
         }
@@ -34,16 +40,21 @@ fn exchange_h264_webrtc_offer(offer_sdp: String) -> Result<String, String> {
     ))
 }
 
-fn exchange_offer_with_endpoint(endpoint: &str, offer_sdp: &str) -> Result<String, String> {
+fn exchange_offer_with_endpoint(
+    endpoint: &str,
+    offer_sdp: &str,
+    latitude: f64,
+    longitude: f64,
+) -> Result<String, String> {
     let json_body = serde_json::json!({
         "type": "offer",
         "sdp": offer_sdp,
         "sample_fps": 3.0,
         "confidence_threshold": 0.1,
         "camera_id": "macbook-pro-camera",
-        "latitude": 37.7749,
-        "longitude": -122.4194,
-        "road_name": "Smart Wild Desktop Test",
+        "latitude": latitude,
+        "longitude": longitude,
+        "road_name": "Jacobs School of Engineering at UCSD",
         "direction": "desktop",
         "mile_marker": "local",
         "use_pose_detection": false,
@@ -65,6 +76,18 @@ fn exchange_offer_with_endpoint(endpoint: &str, offer_sdp: &str) -> Result<Strin
     }
 
     parse_answer(json_response)
+}
+
+fn validate_coordinates(latitude: f64, longitude: f64) -> Result<(), String> {
+    if !latitude.is_finite() || !(-90.0..=90.0).contains(&latitude) {
+        return Err(format!("Invalid latitude: {latitude}"));
+    }
+
+    if !longitude.is_finite() || !(-180.0..=180.0).contains(&longitude) {
+        return Err(format!("Invalid longitude: {longitude}"));
+    }
+
+    Ok(())
 }
 
 fn parse_answer(response: HttpResponse) -> Result<String, String> {
