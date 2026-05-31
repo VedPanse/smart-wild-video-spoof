@@ -5,8 +5,8 @@ import "./App.css";
 const STREAM_TARGET = "wildsafe-ml-service.onrender.com";
 const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 const CAMERA_LOCATION = {
-  latitude: 32.8815,
-  longitude: -117.235,
+  latitude: 32.8813349,
+  longitude: -117.2348484,
 };
 
 async function waitForIceGatheringComplete(peerConnection) {
